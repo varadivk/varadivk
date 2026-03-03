@@ -1,0 +1,19 @@
+{
+  "name": "Thiverge Web",
+  "build": {
+    "dockerfile": "../Dockerfile",
+    "context": ".."
+  },
+  "workspaceFolder": "/usr/src/app",
+  "settings": {
+    "terminal.integrated.shell.linux": "/bin/sh"
+  },
+  "extensions": [
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "ms-vscode.node-debug2"
+  ],
+  "forwardPorts": [3000],
+  "postCreateCommand": "npm install",
+  "remoteUser": "node"
+}

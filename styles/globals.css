@@ -1,0 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { color-scheme: dark; }
+html, body { height: 100%; background: #070A0F; }
+a { text-decoration: none; }
+.prose-invert :where(a):not(:where([class~="not-prose"] *)) { color: #60A5FA; }
