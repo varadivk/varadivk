@@ -1,0 +1,126 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Data Asset Valuation Tool</h1>
+    <p class="page-subtitle">
+      Estimate the value of any data asset using three complementary financial models —
+      cost-based, market-comparable, and discounted cash flow (DCF).
+    </p>
+  </div>
+
+  <div class="valuation-layout">
+
+    <!-- Form -->
+    <div class="form-card">
+      <h2>Asset Parameters</h2>
+
+      <div class="error-box" ng-show="vm.error">{{ vm.error }}</div>
+
+      <form name="valuationForm" ng-submit="vm.calculate()" novalidate>
+
+        <div class="form-group">
+          <label class="form-label">Asset Name</label>
+          <input class="form-input" type="text" ng-model="vm.params.assetName"
+                 placeholder="e.g. Freight Lane Benchmark Feed" required />
+        </div>
+
+        <div class="form-section-label">Cost-Based Inputs</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Data Collection Cost ($)</label>
+            <input class="form-input" type="number" ng-model="vm.params.collectionCost" min="0" step="100" placeholder="50000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Data Curation Cost ($)</label>
+            <input class="form-input" type="number" ng-model="vm.params.curationCost" min="0" step="100" placeholder="20000" />
+          </div>
+        </div>
+
+        <div class="form-section-label">Market-Comparable Inputs</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Market Benchmark Value ($)</label>
+            <input class="form-input" type="number" ng-model="vm.params.marketBenchmark" min="0" step="1000" placeholder="200000" />
+            <div class="form-hint">Comparable listing from a data marketplace</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Similarity Score (0–1)</label>
+            <input class="form-input" type="number" ng-model="vm.params.similarity" min="0" max="1" step="0.05" placeholder="0.8" />
+            <div class="form-hint">How similar is your asset to the benchmark?</div>
+          </div>
+        </div>
+
+        <div class="form-section-label">DCF / Income Inputs</div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Annual Revenue Projection ($)</label>
+            <input class="form-input" type="number" ng-model="vm.params.annualRevenue" min="0" step="1000" placeholder="80000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Revenue Growth Rate (e.g. 0.10)</label>
+            <input class="form-input" type="number" ng-model="vm.params.growthRate" min="0" max="5" step="0.01" placeholder="0.10" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Discount Rate (e.g. 0.12)</label>
+            <input class="form-input" type="number" ng-model="vm.params.discountRate" min="0.01" max="1" step="0.01" placeholder="0.12" />
+          </div>
+          <div class="form-group">
+            <label class="form-label">Projection Period (years)</label>
+            <input class="form-input" type="number" ng-model="vm.params.years" min="1" max="20" step="1" placeholder="5" />
+          </div>
+        </div>
+
+        <div class="form-btn-row">
+          <button type="submit" class="btn btn-primary">Calculate Valuation</button>
+          <button type="button" class="btn btn-secondary" ng-click="vm.reset()">Reset</button>
+        </div>
+
+      </form>
+    </div>
+
+    <!-- Results -->
+    <div>
+      <div class="result-card" ng-show="vm.result">
+        <h2>Valuation: {{ vm.result.assetName }}</h2>
+
+        <div class="result-metric">
+          <span class="metric-label">Cost-Based Value</span>
+          <span class="metric-value">${{ vm.formatNumber(vm.result.costValue) }}</span>
+        </div>
+        <div class="result-metric">
+          <span class="metric-label">Market-Comparable Value</span>
+          <span class="metric-value">${{ vm.formatNumber(vm.result.marketValue) }}</span>
+        </div>
+        <div class="result-metric">
+          <span class="metric-label">DCF Value ({{ vm.result.years }}-year projection)</span>
+          <span class="metric-value">${{ vm.formatNumber(vm.result.dcfValue) }}</span>
+        </div>
+
+        <div class="blended-box">
+          <div class="blended-label">Blended Valuation (equal-weight)</div>
+          <div class="blended-value">${{ vm.formatNumber(vm.result.blended) }}</div>
+          <div class="recommendation">&#128161; {{ vm.result.recommendation }}</div>
+        </div>
+      </div>
+
+      <div class="placeholder-card" ng-hide="vm.result">
+        <div style="font-size:2rem;margin-bottom:0.75rem">💰</div>
+        <p>Fill in the parameters and click <strong>Calculate Valuation</strong> to see the cost-based, market-comparable, and DCF values for your data asset.</p>
+      </div>
+
+      <!-- Methodology -->
+      <div class="methodology-card">
+        <div style="font-weight:700;margin-bottom:0.5rem;font-size:0.9rem">Methodology</div>
+        <ul class="methodology-list">
+          <li><strong>Cost-Based:</strong> Collection cost + curation cost</li>
+          <li><strong>Market-Comparable:</strong> Benchmark price &times; similarity score</li>
+          <li><strong>DCF:</strong> &Sigma; Revenue &times; (1+g)<sup>t</sup> / (1+r)<sup>t</sup> for t = 1 &hellip; years</li>
+          <li><strong>Blended:</strong> Simple average of all three methods</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>

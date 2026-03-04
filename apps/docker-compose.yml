@@ -1,0 +1,50 @@
+# ============================================================
+# ThinkVerge — Data Monetization Agent
+# Docker Compose: deploy both frontends together
+#
+# Usage:
+#   docker compose up --build          # start both apps
+#   docker compose up --build -d       # detached (background)
+#   docker compose down                # stop and remove
+#
+# Flask (Python):   http://localhost:5000
+# AngularJS:        http://localhost:8080
+# ============================================================
+
+services:
+
+  # ----------------------------------------------------------
+  # Python / Flask frontend (Gunicorn)
+  # ----------------------------------------------------------
+  python-frontend:
+    build:
+      context: ./python-frontend
+      dockerfile: Dockerfile
+    container_name: thinkverge-python
+    ports:
+      - "5000:5000"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5000/')\" || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # ----------------------------------------------------------
+  # AngularJS frontend (nginx static)
+  # ----------------------------------------------------------
+  angularjs-frontend:
+    build:
+      context: ./angularjs-frontend
+      dockerfile: Dockerfile
+    container_name: thinkverge-angularjs
+    ports:
+      - "8080:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s

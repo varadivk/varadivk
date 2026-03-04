@@ -1,0 +1,114 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Data Product Catalog</h1>
+    <p class="page-subtitle">
+      Monetisable products built on top of catalogued data assets —
+      with pricing tiers, SLAs, and live revenue metrics.
+    </p>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-value">{{ vm.liveCount }}</div><div class="stat-label">Live Products</div></div>
+    <div class="stat-card"><div class="stat-value">{{ vm.betaCount }}</div><div class="stat-label">In Beta</div></div>
+    <div class="stat-card"><div class="stat-value">{{ vm.draftCount }}</div><div class="stat-label">In Draft</div></div>
+    <div class="stat-card"><div class="stat-value">${{ vm.totalArr | number:0 }}</div><div class="stat-label">Total Monthly ARR</div></div>
+  </div>
+
+  <!-- Product cards -->
+  <div ng-repeat="product in vm.products" class="product-card">
+    <div class="product-header">
+      <div>
+        <div class="product-name">{{ product.name }}</div>
+        <div class="product-meta">
+          <span class="product-type-tag">{{ product.type }}</span>
+          <span class="product-industry">{{ product.industry }}</span>
+          <span class="product-meta-item" ng-show="product.launchDate">Launched {{ product.launchDate }}</span>
+        </div>
+        <div class="product-description">{{ product.description }}</div>
+      </div>
+      <div class="product-right">
+        <span class="status-badge" ng-class="'status-' + product.status.toLowerCase()">{{ product.status }}</span>
+        <div class="product-arr" ng-show="product.monthlyArrUsd > 0">${{ product.monthlyArrUsd | number:0 }}/mo ARR</div>
+        <div class="product-customers" ng-show="product.customers > 0">{{ product.customers }} customers</div>
+        <div class="product-calls" ng-show="product.apiCallsMtd > 0">{{ vm.formatNum(product.apiCallsMtd) }} API calls MTD</div>
+      </div>
+    </div>
+
+    <!-- SLA row -->
+    <div class="sla-row">
+      <div class="sla-item"><span class="sla-label">Uptime SLA</span><span class="sla-value">{{ product.sla.uptimePct }}%</span></div>
+      <div class="sla-item"><span class="sla-label">P99 Latency</span><span class="sla-value">{{ product.sla.latencyP99Ms > 0 ? product.sla.latencyP99Ms + ' ms' : '—' }}</span></div>
+      <div class="sla-item"><span class="sla-label">Refresh Rate</span><span class="sla-value">{{ product.sla.refreshRate }}</span></div>
+      <div class="sla-item"><span class="sla-label">Source Assets</span><span class="sla-value">{{ product.sourceAssets.join(', ') }}</span></div>
+    </div>
+
+    <!-- Pricing tiers -->
+    <div class="pricing-tiers">
+      <div class="pricing-tier" ng-class="{ 'tier-highlighted': $index === 1 }" ng-repeat="tier in product.pricingTiers">
+        <div class="tier-name">{{ tier.tier }}</div>
+        <div class="tier-price">
+          <span class="tier-price-value" ng-if="tier.monthlyUsd > 0">${{ tier.monthlyUsd | number:0 }}</span>
+          <span class="tier-price-period" ng-if="tier.monthlyUsd > 0">/mo</span>
+          <span class="tier-price-value" ng-if="tier.monthlyUsd === 0">Custom</span>
+        </div>
+        <div class="tier-calls" ng-if="tier.callsIncluded > 0">{{ tier.callsIncluded | number:0 }} calls included</div>
+        <div class="tier-calls" ng-if="tier.callsIncluded === -1">Unlimited</div>
+        <div class="tier-overage" ng-if="tier.overagePer1k > 0">${{ tier.overagePer1k }} per 1k overage</div>
+        <ul class="tier-features">
+          <li ng-repeat="feat in tier.features">{{ feat }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Data Asset Inventory -->
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Underlying Data Assets</h2>
+    <div class="asset-table-wrap">
+      <table class="asset-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Asset Name</th>
+            <th>Type</th>
+            <th>Sub-Industry</th>
+            <th>Sensitivity</th>
+            <th>Quality Score</th>
+            <th>Volume</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="asset in vm.assets">
+            <td class="asset-id">{{ asset.id }}</td>
+            <td class="asset-name-cell">
+              {{ asset.name }}
+              <span class="pii-badge" ng-show="asset.pii">PII</span>
+            </td>
+            <td>{{ asset.assetType }}</td>
+            <td>{{ asset.subIndustry }}</td>
+            <td>
+              <span class="sensitivity-badge" ng-class="'sensitivity-' + asset.sensitivity.toLowerCase().replace(/ /g, '')">
+                {{ asset.sensitivity }}
+              </span>
+            </td>
+            <td>
+              <div class="quality-bar-row">
+                <div class="quality-bar-bg">
+                  <div class="quality-bar-fill" ng-class="vm.qualityClass(asset.quality.overall)"
+                       ng-style="{ width: asset.quality.overall + '%' }"></div>
+                </div>
+                <span class="quality-score">{{ asset.quality.overall }}</span>
+              </div>
+            </td>
+            <td>{{ vm.formatNum(asset.volume.records) }} &middot; {{ asset.volume.updateFreq }}</td>
+            <td><span class="status-badge" ng-class="'status-' + asset.status.toLowerCase()">{{ asset.status }}</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>

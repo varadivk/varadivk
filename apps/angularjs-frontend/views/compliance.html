@@ -1,0 +1,75 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Compliance &amp; Regulatory Matrix</h1>
+    <p class="page-subtitle">
+      Every data monetization decision must pass through a compliance gate.
+      This matrix maps key regulations, their obligations, penalties, and
+      impact on data product commercialisation.
+    </p>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-value">{{ vm.regulations.length }}</div><div class="stat-label">Regulations Tracked</div></div>
+    <div class="stat-card"><div class="stat-value">{{ vm.highCount }}</div><div class="stat-label">High Severity</div></div>
+    <div class="stat-card"><div class="stat-value">{{ vm.medCount }}</div><div class="stat-label">Medium Severity</div></div>
+    <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Active Violations</div></div>
+  </div>
+
+  <!-- Regulation cards -->
+  <div class="reg-card" ng-repeat="reg in vm.regulations">
+    <div class="reg-header">
+      <div>
+        <div class="reg-id-badge">{{ reg.id }}</div>
+        <div class="reg-name">{{ reg.name }}</div>
+        <div class="reg-jurisdiction">&#128205; {{ reg.jurisdiction }}</div>
+      </div>
+      <div class="reg-right">
+        <span class="severity-chip" ng-class="'severity-' + reg.severity.toLowerCase()">{{ reg.severity }}</span>
+        <div class="reg-penalty">Max penalty: <strong>{{ reg.maxPenalty }}</strong></div>
+      </div>
+    </div>
+
+    <div class="reg-scope">{{ reg.scope }}</div>
+
+    <div class="reg-body">
+      <div class="reg-col">
+        <div class="reg-col-title">Key Obligations</div>
+        <ul class="reg-list">
+          <li ng-repeat="ob in reg.keyObligations">{{ ob }}</li>
+        </ul>
+      </div>
+      <div class="reg-col">
+        <div class="reg-col-title">Affected Data Types</div>
+        <div class="tag-group">
+          <span class="data-tag" ng-repeat="dt in reg.dataTypes">{{ dt }}</span>
+        </div>
+        <div class="reg-col-title" style="margin-top:1rem">Industries Impacted</div>
+        <div class="tag-group">
+          <span class="industry-tag" ng-repeat="ind in reg.industries">{{ ind }}</span>
+        </div>
+      </div>
+      <div class="reg-col">
+        <div class="reg-col-title">Monetisation Impact</div>
+        <div class="reg-impact">{{ reg.monetizationImpact }}</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compliance checklist -->
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Pre-Launch Compliance Checklist</h2>
+    <div class="checklist-grid">
+      <div class="checklist-item" ng-class="item.status === 'ok' ? 'check-ok' : 'check-warn'"
+           ng-repeat="item in vm.checklist">
+        <div class="check-status">{{ item.status === 'ok' ? '✅' : '⚠️' }}</div>
+        <div class="check-content">
+          <div class="check-title">{{ item.title }}</div>
+          <div class="check-desc">{{ item.desc }}</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

@@ -1,0 +1,150 @@
+{% extends "base.html" %}
+{% block title %}Valuation Tool{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Data Asset Valuation Tool</h1>
+    <p class="page-subtitle">
+      Estimate the value of any data asset using three complementary financial models —
+      cost-based, market-comparable, and discounted cash flow (DCF).
+    </p>
+  </div>
+
+  <div class="valuation-layout">
+
+    <!-- Form -->
+    <div class="form-card">
+      <h2>Asset Parameters</h2>
+
+      {% if error %}
+      <div class="error-box">{{ error }}</div>
+      {% endif %}
+
+      <form method="POST" action="/valuation">
+
+        <div class="form-group">
+          <label class="form-label" for="asset_name">Asset Name</label>
+          <input class="form-input" type="text" id="asset_name" name="asset_name"
+                 value="{{ form_data.get('asset_name', '') }}"
+                 placeholder="e.g. Freight Lane Benchmark Feed" required />
+        </div>
+
+        <h3 style="font-size:0.85rem;color:var(--muted);margin:1rem 0 0.5rem;text-transform:uppercase;letter-spacing:0.06em">
+          Cost-Based Inputs
+        </h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="collection_cost">Data Collection Cost ($)</label>
+            <input class="form-input" type="number" id="collection_cost" name="collection_cost" min="0" step="100"
+                   value="{{ form_data.get('collection_cost', '') }}" placeholder="50000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="curation_cost">Data Curation Cost ($)</label>
+            <input class="form-input" type="number" id="curation_cost" name="curation_cost" min="0" step="100"
+                   value="{{ form_data.get('curation_cost', '') }}" placeholder="20000" />
+          </div>
+        </div>
+
+        <h3 style="font-size:0.85rem;color:var(--muted);margin:1rem 0 0.5rem;text-transform:uppercase;letter-spacing:0.06em">
+          Market-Comparable Inputs
+        </h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="market_benchmark">Market Benchmark Value ($)</label>
+            <input class="form-input" type="number" id="market_benchmark" name="market_benchmark" min="0" step="1000"
+                   value="{{ form_data.get('market_benchmark', '') }}" placeholder="200000" />
+            <div class="form-hint">Comparable listing price from a data marketplace</div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="similarity">Similarity Score (0–1)</label>
+            <input class="form-input" type="number" id="similarity" name="similarity" min="0" max="1" step="0.05"
+                   value="{{ form_data.get('similarity', '0.8') }}" placeholder="0.8" />
+            <div class="form-hint">How similar is your asset to the benchmark?</div>
+          </div>
+        </div>
+
+        <h3 style="font-size:0.85rem;color:var(--muted);margin:1rem 0 0.5rem;text-transform:uppercase;letter-spacing:0.06em">
+          DCF / Income Inputs
+        </h3>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="annual_revenue">Annual Revenue Projection ($)</label>
+            <input class="form-input" type="number" id="annual_revenue" name="annual_revenue" min="0" step="1000"
+                   value="{{ form_data.get('annual_revenue', '') }}" placeholder="80000" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="growth_rate">Revenue Growth Rate (e.g. 0.10)</label>
+            <input class="form-input" type="number" id="growth_rate" name="growth_rate" min="0" max="5" step="0.01"
+                   value="{{ form_data.get('growth_rate', '0.1') }}" placeholder="0.10" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="discount_rate">Discount Rate (e.g. 0.12)</label>
+            <input class="form-input" type="number" id="discount_rate" name="discount_rate" min="0.01" max="1" step="0.01"
+                   value="{{ form_data.get('discount_rate', '0.12') }}" placeholder="0.12" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="years">Projection Period (years)</label>
+            <input class="form-input" type="number" id="years" name="years" min="1" max="20" step="1"
+                   value="{{ form_data.get('years', '5') }}" placeholder="5" />
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" style="width:100%;margin-top:0.75rem">
+          Calculate Valuation
+        </button>
+      </form>
+    </div>
+
+    <!-- Results -->
+    <div>
+      {% if result and not result.get('error') %}
+      <div class="result-card">
+        <h2>Valuation: {{ result.asset_name }}</h2>
+
+        <div class="result-metric">
+          <span class="metric-label">Cost-Based Value</span>
+          <span class="metric-value">${{ "{:,.0f}".format(result.cost_value) }}</span>
+        </div>
+        <div class="result-metric">
+          <span class="metric-label">Market-Comparable Value</span>
+          <span class="metric-value">${{ "{:,.0f}".format(result.market_value) }}</span>
+        </div>
+        <div class="result-metric">
+          <span class="metric-label">DCF Value ({{ result.years }}-year projection)</span>
+          <span class="metric-value">${{ "{:,.0f}".format(result.dcf_value) }}</span>
+        </div>
+
+        <div class="blended-box">
+          <div class="blended-label">Blended Valuation (equal-weight)</div>
+          <div class="blended-value">${{ "{:,.0f}".format(result.blended) }}</div>
+          <div class="recommendation">💡 {{ result.recommendation }}</div>
+        </div>
+      </div>
+      {% elif result and result.get('error') %}
+      <div class="error-box">{{ result.error }}</div>
+      {% else %}
+      <div class="placeholder-card">
+        <p style="font-size:2rem;margin-bottom:0.75rem">💰</p>
+        <p>Fill in the parameters on the left and click <strong>Calculate Valuation</strong> to see the cost-based, market-comparable, and DCF values for your data asset.</p>
+      </div>
+      {% endif %}
+
+      <!-- Methodology note -->
+      <div style="margin-top:1.5rem;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;">
+        <div style="font-weight:700;margin-bottom:0.5rem;font-size:0.9rem">Methodology</div>
+        <ul style="font-size:0.82rem;color:var(--muted);padding-left:1.1rem;line-height:1.8;list-style:disc">
+          <li><strong style="color:var(--text)">Cost-Based:</strong> Collection cost + curation cost</li>
+          <li><strong style="color:var(--text)">Market-Comparable:</strong> Benchmark price × similarity score</li>
+          <li><strong style="color:var(--text)">DCF:</strong> Σ Revenue × (1+g)ᵗ / (1+r)ᵗ for t = 1 … years</li>
+          <li><strong style="color:var(--text)">Blended:</strong> Simple average of all three methods</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

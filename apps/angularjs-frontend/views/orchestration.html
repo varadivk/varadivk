@@ -1,0 +1,87 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Agent Orchestration</h1>
+    <p class="page-subtitle">
+      How the seven specialized agents are coordinated by the Master Orchestrator to
+      deliver end-to-end data monetization — from discovery to revenue.
+    </p>
+  </div>
+
+  <div class="orchestration-layout">
+
+    <!-- Visual diagram -->
+    <div class="orch-diagram">
+      <h2>System Architecture</h2>
+
+      <div class="orch-center">
+        <div class="orch-orchestrator">&#129504; Master Orchestrator</div>
+      </div>
+
+      <div class="orch-divider">&#8595; routes tasks to &#8595;</div>
+
+      <div class="orch-sub-agents">
+        <div class="orch-agent-box" ng-class="{ 'agent-active': agent.status === 'active' }"
+             ng-repeat="agent in vm.subAgents">
+          <span class="icon">{{ agent.icon }}</span>
+          {{ agent.name }}
+        </div>
+      </div>
+
+      <div class="orch-divider">&#8595; all share &#8595;</div>
+
+      <div class="orch-tool-layer">
+        &#128295; Shared Tool Layer — Data catalog &middot; Pricing API &middot; CRM &middot; Compliance checker &middot; Billing &middot; Audit log
+      </div>
+
+      <!-- Human checkpoints -->
+      <div class="checkpoint-box">
+        <strong class="checkpoint-title">&#9888; Human Checkpoints</strong>
+        <ul class="checkpoint-list">
+          <li ng-repeat="cp in vm.checkpoints">{{ cp }}</li>
+        </ul>
+      </div>
+
+      <!-- Orchestration loop -->
+      <div style="margin-top:1.5rem">
+        <div class="loop-label">Orchestration Loop</div>
+        <ol class="loop-list">
+          <li ng-repeat="step in vm.orchestrationLoop">{{ step }}</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Agent detail cards -->
+    <div class="agents-detail">
+      <div class="agent-detail-card" ng-repeat="agent in vm.agents">
+        <div class="agent-detail-header">
+          <div class="agent-detail-icon">{{ agent.icon }}</div>
+          <div class="agent-detail-name">{{ agent.name }}</div>
+          <div class="agent-status-badge" ng-class="agent.status">
+            {{ agent.status }} &middot; {{ agent.tasks }} tasks
+          </div>
+        </div>
+        <div class="agent-detail-desc">{{ agent.description }}</div>
+        <div class="tools-list">
+          <span class="tool-tag" ng-repeat="tool in agent.tools">{{ tool }}</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Strategic Initiatives -->
+  <div class="initiatives-section">
+    <h2 class="section-title">Strategic Initiatives Roadmap</h2>
+    <div class="initiatives-grid">
+      <div class="initiative-card" ng-repeat="init in vm.initiatives">
+        <div class="initiative-title">{{ init.title }}</div>
+        <div class="initiative-months">{{ init.months }}</div>
+        <ul class="initiative-items">
+          <li ng-repeat="step in init.steps">{{ step }}</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>

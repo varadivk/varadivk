@@ -1,0 +1,157 @@
+{% extends "base.html" %}
+{% block title %}Data Product Catalog{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Data Product Catalog</h1>
+    <p class="page-subtitle">
+      Monetisable products built on top of catalogued data assets —
+      with pricing tiers, SLAs, and live revenue metrics.
+    </p>
+  </div>
+
+  <!-- Summary stats -->
+  <div class="stats-row" style="margin-bottom:2rem">
+    {% set live = products | selectattr('status', 'equalto', 'Live') | list %}
+    {% set beta = products | selectattr('status', 'equalto', 'Beta') | list %}
+    {% set draft = products | selectattr('status', 'equalto', 'Draft') | list %}
+    {% set total_arr = products | sum(attribute='monthly_arr_usd') %}
+    <div class="stat-card"><div class="stat-value">{{ live|length }}</div><div class="stat-label">Live Products</div></div>
+    <div class="stat-card"><div class="stat-value">{{ beta|length }}</div><div class="stat-label">In Beta</div></div>
+    <div class="stat-card"><div class="stat-value">{{ draft|length }}</div><div class="stat-label">In Draft</div></div>
+    <div class="stat-card"><div class="stat-value">${{ "{:,.0f}".format(total_arr) }}</div><div class="stat-label">Total Monthly ARR</div></div>
+  </div>
+
+  <!-- Product cards -->
+  {% for product in products %}
+  <div class="product-card">
+    <div class="product-header">
+      <div>
+        <div class="product-name">{{ product.name }}</div>
+        <div class="product-meta">
+          <span class="product-type-tag">{{ product.type }}</span>
+          <span class="product-industry">{{ product.industry }}</span>
+          {% if product.launch_date %}
+          <span class="product-meta-item">Launched {{ product.launch_date }}</span>
+          {% endif %}
+        </div>
+        <div class="product-description">{{ product.description }}</div>
+      </div>
+      <div class="product-right">
+        <span class="status-badge status-{{ product.status | lower }}">{{ product.status }}</span>
+        {% if product.monthly_arr_usd > 0 %}
+        <div class="product-arr">${{ "{:,.0f}".format(product.monthly_arr_usd) }}/mo ARR</div>
+        <div class="product-customers">{{ product.customers }} customers</div>
+        {% endif %}
+        {% if product.api_calls_mtd > 0 %}
+        <div class="product-calls">{{ "{:,.0f}".format(product.api_calls_mtd) }} API calls MTD</div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- SLA row -->
+    <div class="sla-row">
+      <div class="sla-item">
+        <span class="sla-label">Uptime SLA</span>
+        <span class="sla-value">{{ product.sla.uptime_pct }}%</span>
+      </div>
+      <div class="sla-item">
+        <span class="sla-label">P99 Latency</span>
+        <span class="sla-value">{% if product.sla.latency_p99_ms > 0 %}{{ product.sla.latency_p99_ms }} ms{% else %}—{% endif %}</span>
+      </div>
+      <div class="sla-item">
+        <span class="sla-label">Refresh Rate</span>
+        <span class="sla-value">{{ product.sla.refresh_rate }}</span>
+      </div>
+      <div class="sla-item">
+        <span class="sla-label">Source Assets</span>
+        <span class="sla-value">{{ product.source_assets | join(', ') }}</span>
+      </div>
+    </div>
+
+    <!-- Pricing tiers -->
+    <div class="pricing-tiers">
+      {% for tier in product.pricing_tiers %}
+      <div class="pricing-tier {% if loop.index == 2 %}tier-highlighted{% endif %}">
+        <div class="tier-name">{{ tier.tier }}</div>
+        <div class="tier-price">
+          {% if tier.monthly_usd == 0 %}
+          <span class="tier-price-value">Custom</span>
+          {% else %}
+          <span class="tier-price-value">${{ "{:,}".format(tier.monthly_usd) }}</span>
+          <span class="tier-price-period">/mo</span>
+          {% endif %}
+        </div>
+        {% if tier.calls_included > 0 %}
+        <div class="tier-calls">{{ "{:,}".format(tier.calls_included) }} calls included</div>
+        {% if tier.overage_per_1k > 0 %}
+        <div class="tier-overage">${{ tier.overage_per_1k }} per 1k overage</div>
+        {% endif %}
+        {% elif tier.calls_included == -1 %}
+        <div class="tier-calls">Unlimited</div>
+        {% endif %}
+        <ul class="tier-features">
+          {% for feat in tier.features %}
+          <li>{{ feat }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- Data Asset Inventory -->
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Underlying Data Assets</h2>
+    <div class="asset-table-wrap">
+      <table class="asset-table">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Asset Name</th>
+            <th>Type</th>
+            <th>Industry</th>
+            <th>Sensitivity</th>
+            <th>Quality Score</th>
+            <th>Volume</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for asset in assets %}
+          <tr>
+            <td class="asset-id">{{ asset.id }}</td>
+            <td class="asset-name-cell">
+              {{ asset.name }}
+              {% if asset.pii %}<span class="pii-badge">PII</span>{% endif %}
+            </td>
+            <td>{{ asset.asset_type }}</td>
+            <td>{{ asset.sub_industry }}</td>
+            <td>
+              <span class="sensitivity-badge sensitivity-{{ asset.sensitivity | lower | replace(' ','') }}">
+                {{ asset.sensitivity }}
+              </span>
+            </td>
+            <td>
+              <div class="quality-bar-row">
+                <div class="quality-bar-bg">
+                  <div class="quality-bar-fill {% if asset.quality.overall >= 90 %}q-high{% elif asset.quality.overall >= 75 %}q-mid{% else %}q-low{% endif %}"
+                       style="width:{{ asset.quality.overall }}%"></div>
+                </div>
+                <span class="quality-score">{{ asset.quality.overall }}</span>
+              </div>
+            </td>
+            <td>{{ "{:,.0f}".format(asset.volume.records / 1_000_000) }}M · {{ asset.volume.update_freq }}</td>
+            <td><span class="status-badge status-{{ asset.status | lower }}">{{ asset.status }}</span></td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</div>
+{% endblock %}

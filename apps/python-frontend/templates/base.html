@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{% block title %}Data Monetization Agent{% endblock %} — ThinkVerge</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/main.css') }}" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="logo">ThinkVerge <span class="logo-tag">Data Monetization Agent</span></a>
+      <nav class="nav">
+        <a href="/" class="nav-link {% if request.endpoint == 'index' %}active{% endif %}">Dashboard</a>
+        <a href="/industries" class="nav-link {% if request.endpoint == 'industries' %}active{% endif %}">Industries</a>
+        <a href="/data-products" class="nav-link {% if request.endpoint == 'data_products' %}active{% endif %}">Data Products</a>
+        <a href="/compliance" class="nav-link {% if request.endpoint == 'compliance' %}active{% endif %}">Compliance</a>
+        <a href="/revenue" class="nav-link {% if request.endpoint == 'revenue' %}active{% endif %}">Revenue</a>
+        <a href="/valuation" class="nav-link {% if request.endpoint == 'valuation' %}active{% endif %}">Valuation</a>
+        <a href="/orchestration" class="nav-link {% if request.endpoint == 'orchestration' %}active{% endif %}">Orchestration</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="main-content">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© 2026 ThinkVerge.in — Agentic AI Enablement</span>
+      <span class="footer-tag">Python / Flask · Deployable via Docker</span>
+    </div>
+  </footer>
+
+  {% block scripts %}{% endblock %}
+</body>
+</html>
