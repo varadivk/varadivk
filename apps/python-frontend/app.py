@@ -735,15 +735,26 @@ def valuation():
     if request.method == "POST":
         form_data = request.form.to_dict()
         try:
+            def _float(key, default):
+                v = form_data.get(key, "").strip()
+                return float(v) if v != "" else default
+
+            def _int(key, default):
+                v = form_data.get(key, "").strip()
+                return int(v) if v != "" else default
+
             asset_name = form_data.get("asset_name", "Unnamed Asset").strip() or "Unnamed Asset"
-            collection_cost = float(form_data.get("collection_cost") or 0)
-            curation_cost = float(form_data.get("curation_cost") or 0)
-            market_benchmark = float(form_data.get("market_benchmark") or 0)
-            similarity = max(0.0, min(1.0, float(form_data.get("similarity") or 0.8)))
-            annual_revenue = float(form_data.get("annual_revenue") or 0)
-            growth_rate = float(form_data.get("growth_rate") or 0.1)
-            discount_rate = float(form_data.get("discount_rate") or 0.12)
-            years = max(1, min(20, int(form_data.get("years") or 5)))
+            collection_cost = _float("collection_cost", 0)
+            curation_cost   = _float("curation_cost", 0)
+            market_benchmark = _float("market_benchmark", 0)
+            similarity       = max(0.0, min(1.0, _float("similarity", 0.8)))
+            annual_revenue   = _float("annual_revenue", 0)
+            growth_rate      = _float("growth_rate", 0.1)
+            discount_rate    = _float("discount_rate", 0.12)
+            years            = max(1, min(20, _int("years", 5)))
+
+            if discount_rate <= -1.0:
+                raise ValueError("Discount rate must be greater than -100%.")
 
             cost_value = collection_cost + curation_cost
             market_value = market_benchmark * similarity

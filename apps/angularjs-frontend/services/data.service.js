@@ -157,14 +157,17 @@
     // Valuation calculator (mirrors Python app logic)
     // -----------------------------------------------------------------------
     function calculateValuation(params) {
-      var collectionCost = parseFloat(params.collectionCost) || 0;
-      var curationCost   = parseFloat(params.curationCost)   || 0;
-      var marketBench    = parseFloat(params.marketBenchmark) || 0;
-      var similarity     = Math.max(0, Math.min(1, parseFloat(params.similarity) || 0.8));
-      var annualRevenue  = parseFloat(params.annualRevenue)  || 0;
-      var growthRate     = parseFloat(params.growthRate)     || 0.1;
-      var discountRate   = parseFloat(params.discountRate)   || 0.12;
-      var years          = Math.max(1, Math.min(20, parseInt(params.years) || 5));
+      function _num(v, def) { var n = parseFloat(v); return isNaN(n) ? def : n; }
+      function _int(v, def) { var n = parseInt(v, 10); return isNaN(n) ? def : n; }
+
+      var collectionCost = _num(params.collectionCost, 0);
+      var curationCost   = _num(params.curationCost,   0);
+      var marketBench    = _num(params.marketBenchmark, 0);
+      var similarity     = Math.max(0, Math.min(1, _num(params.similarity, 0.8)));
+      var annualRevenue  = _num(params.annualRevenue,  0);
+      var growthRate     = _num(params.growthRate,     0.1);
+      var discountRate   = _num(params.discountRate,   0.12);
+      var years          = Math.max(1, Math.min(20, _int(params.years, 5)));
 
       var costValue   = collectionCost + curationCost;
       var marketValue = marketBench * similarity;
@@ -175,12 +178,12 @@
       var blended = (costValue + marketValue + dcfValue) / 3;
 
       return {
-        assetName:    params.assetName || 'Unnamed Asset',
-        costValue:    Math.round(costValue),
-        marketValue:  Math.round(marketValue),
-        dcfValue:     Math.round(dcfValue),
-        blended:      Math.round(blended),
-        years:        years,
+        assetName:      params.assetName || 'Unnamed Asset',
+        costValue:      Math.round(costValue),
+        marketValue:    Math.round(marketValue),
+        dcfValue:       Math.round(dcfValue),
+        blended:        Math.round(blended),
+        years:          years,
         recommendation: getPricingRecommendation(blended)
       };
     }

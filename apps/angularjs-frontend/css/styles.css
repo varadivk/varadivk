@@ -34,10 +34,12 @@ a:hover { text-decoration: underline; }
 .logo { font-weight: 800; font-size: 1rem; color: var(--text); white-space: nowrap; }
 .logo:hover { text-decoration: none; }
 .logo-tag { font-weight: 400; font-size: 0.75rem; color: var(--mint); margin-left: 0.5rem; background: rgba(52,211,153,0.12); padding: 2px 8px; border-radius: 100px; }
-.nav { display: flex; gap: 0.25rem; }
+.nav { display: flex; flex-wrap: wrap; gap: 0.25rem; }
 .nav-link { padding: 0.4rem 0.85rem; border-radius: 8px; font-size: 0.875rem; color: var(--muted); transition: background 0.15s, color 0.15s; }
 .nav-link:hover, .nav-link.active { background: rgba(255,255,255,0.07); color: var(--text); text-decoration: none; }
 .nav-link.active { color: var(--mint); }
+@media (max-width: 900px) { .header-inner { height: auto; min-height: 60px; padding: 0.5rem 0; flex-wrap: wrap; } .nav { justify-content: flex-end; } }
+@media (max-width: 600px) { .nav-link { font-size: 0.78rem; padding: 0.3rem 0.6rem; } }
 
 /* Footer */
 .site-footer { border-top: 1px solid var(--border); background: var(--panel); }

@@ -90,7 +90,7 @@
             <td>{{ asset.assetType }}</td>
             <td>{{ asset.subIndustry }}</td>
             <td>
-              <span class="sensitivity-badge" ng-class="'sensitivity-' + asset.sensitivity.toLowerCase().replace(' ','')">
+              <span class="sensitivity-badge" ng-class="'sensitivity-' + asset.sensitivity.toLowerCase().replace(/ /g, '')">
                 {{ asset.sensitivity }}
               </span>
             </td>

@@ -25,10 +25,11 @@ services:
       - "5000:5000"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://localhost:5000/"]
+      test: ["CMD-SHELL", "python -c \"import urllib.request; urllib.request.urlopen('http://localhost:5000/')\" || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 10s
 
   # ----------------------------------------------------------
   # AngularJS frontend (nginx static)
@@ -46,3 +47,4 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
+      start_period: 5s
