@@ -1,0 +1,110 @@
+{% extends "base.html" %}
+{% block title %}Agent Orchestration{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Agent Orchestration</h1>
+    <p class="page-subtitle">
+      How the seven specialized agents are coordinated by the Master Orchestrator to
+      deliver end-to-end data monetization — from discovery to revenue.
+    </p>
+  </div>
+
+  <div class="orchestration-layout">
+
+    <!-- Visual diagram -->
+    <div class="orch-diagram">
+      <h2>System Architecture</h2>
+
+      <div class="orch-center">
+        <div class="orch-orchestrator">🧠 Master Orchestrator</div>
+      </div>
+
+      <div class="orch-divider">↓ routes tasks to ↓</div>
+
+      <div class="orch-sub-agents">
+        {% for agent in agents if agent.name != 'Master Orchestrator' %}
+        <div class="orch-agent-box {% if agent.status == 'active' %}agent-active{% endif %}">
+          <span class="icon">{{ agent.icon }}</span>
+          {{ agent.name }}
+        </div>
+        {% endfor %}
+      </div>
+
+      <div class="orch-divider">↓ all share ↓</div>
+
+      <div class="orch-tool-layer">
+        🔧 Shared Tool Layer — Data catalog · Pricing API · CRM · Compliance checker · Billing · Audit log
+      </div>
+
+      <!-- Human checkpoint note -->
+      <div style="margin-top:1.5rem;background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:1rem;font-size:0.83rem;">
+        <strong style="color:var(--spark)">⚠ Human Checkpoints</strong>
+        <ul style="margin-top:0.5rem;padding-left:1.1rem;color:var(--muted);list-style:disc;line-height:1.8">
+          <li>Any new external data product launch</li>
+          <li>Pricing change &gt; 20% from baseline</li>
+          <li>Any new data-sharing agreement with an external party</li>
+        </ul>
+      </div>
+
+      <!-- Orchestration loop -->
+      <div style="margin-top:1.5rem;">
+        <div style="font-weight:700;font-size:0.85rem;margin-bottom:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.06em">
+          Orchestration Loop
+        </div>
+        <ol style="font-size:0.83rem;color:var(--muted);padding-left:1.1rem;line-height:2">
+          <li>Goal intake from operator</li>
+          <li>Planning pass — decompose into ordered sub-tasks</li>
+          <li>Parallel execution — independent agents run concurrently</li>
+          <li>Human checkpoint — pause for approval on irreversible actions</li>
+          <li>Outcome feedback — Measurement agent feeds actuals back</li>
+          <li>Continuous loop — re-run on cadence or event triggers</li>
+        </ol>
+      </div>
+    </div>
+
+    <!-- Agent detail cards -->
+    <div class="agents-detail">
+      {% for agent in agents %}
+      <div class="agent-detail-card">
+        <div class="agent-detail-header">
+          <div class="agent-detail-icon">{{ agent.icon }}</div>
+          <div class="agent-detail-name">{{ agent.name }}</div>
+          <div class="agent-status-badge {{ agent.status }}">
+            {{ agent.status }} · {{ agent.tasks }} tasks
+          </div>
+        </div>
+        <div class="agent-detail-desc">{{ agent.description }}</div>
+        <div class="tools-list">
+          {% for tool in agent.tools %}
+          <span class="tool-tag">{{ tool }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+  </div>
+
+  <!-- Strategic Initiatives -->
+  <div class="initiatives-section">
+    <h2 class="section-title">Strategic Initiatives Roadmap</h2>
+    <div class="initiatives-grid">
+      {% for init in initiatives %}
+      <div class="initiative-card">
+        <div class="initiative-title">{{ init.title }}</div>
+        <div class="initiative-months">{{ init.months }}</div>
+        <ul class="initiative-items">
+          {% for item in init.steps %}
+          <li>{{ item }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

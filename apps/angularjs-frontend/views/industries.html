@@ -1,0 +1,40 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Industry Coverage</h1>
+    <p class="page-subtitle">
+      Every industry vertical and sub-industry — with high-value data assets
+      and primary monetization levers for each.
+    </p>
+  </div>
+
+  <div class="industries-list">
+    <div class="industry-card" ng-repeat="(idx, industry) in vm.industries">
+      <div class="industry-header" ng-click="vm.togglePanel(idx)">
+        <span class="industry-icon">{{ industry.icon }}</span>
+        <span class="industry-name">{{ industry.name }}</span>
+        <span class="industry-count">{{ industry.subIndustries.length }} sub-industries</span>
+        <span class="chevron" ng-class="{ 'open': vm.isOpen(idx) }">&#9660;</span>
+      </div>
+      <div class="industry-body" ng-show="vm.isOpen(idx)">
+        <table class="sub-industries-table">
+          <thead>
+            <tr>
+              <th style="width:22%">Sub-Industry</th>
+              <th style="width:40%">High-Value Data Assets</th>
+              <th>Primary Monetization Levers</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="sub in industry.subIndustries">
+              <td class="sub-name">{{ sub.name }}</td>
+              <td class="sub-assets">{{ sub.assets }}</td>
+              <td class="sub-levers">{{ sub.levers }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+</div>

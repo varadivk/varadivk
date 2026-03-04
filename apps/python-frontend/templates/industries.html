@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Industries{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Industry Coverage</h1>
+    <p class="page-subtitle">
+      Every industry vertical and sub-industry — with high-value data assets and
+      primary monetization levers for each.
+    </p>
+  </div>
+
+  <div class="industries-list">
+    {% for industry in industries %}
+    <div class="industry-card">
+      <div class="industry-header" onclick="toggleIndustry(this)">
+        <span class="industry-icon">{{ industry.icon }}</span>
+        <span class="industry-name">{{ industry.name }}</span>
+        <span class="industry-count">{{ industry.sub_industries | length }} sub-industries</span>
+        <span class="chevron">▼</span>
+      </div>
+      <div class="industry-body {% if selected == industry.name %}open{% endif %}">
+        <table class="sub-industries-table">
+          <thead>
+            <tr>
+              <th style="width:22%">Sub-Industry</th>
+              <th style="width:40%">High-Value Data Assets</th>
+              <th>Primary Monetization Levers</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for sub in industry.sub_industries %}
+            <tr>
+              <td class="sub-name">{{ sub.name }}</td>
+              <td class="sub-assets">{{ sub.assets }}</td>
+              <td class="sub-levers">{{ sub.levers }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  function toggleIndustry(header) {
+    const body = header.nextElementSibling;
+    const chevron = header.querySelector('.chevron');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    chevron.style.transform = isOpen ? '' : 'rotate(180deg)';
+  }
+
+  // Auto-open the first industry on load
+  document.addEventListener('DOMContentLoaded', function () {
+    const firstHeader = document.querySelector('.industry-header');
+    if (firstHeader && !document.querySelector('.industry-body.open')) {
+      toggleIndustry(firstHeader);
+    }
+  });
+</script>
+{% endblock %}
