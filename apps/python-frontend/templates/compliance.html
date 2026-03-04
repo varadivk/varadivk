@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Compliance & Regulatory Matrix{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Compliance & Regulatory Matrix</h1>
+    <p class="page-subtitle">
+      Every data monetization decision must pass through a compliance gate.
+      This matrix maps the key regulations, their obligations, penalties, and
+      impact on data product commercialisation.
+    </p>
+  </div>
+
+  <!-- Severity summary -->
+  <div class="stats-row" style="margin-bottom:2rem">
+    {% set high = regulations | selectattr('severity', 'equalto', 'High') | list %}
+    {% set med  = regulations | selectattr('severity', 'equalto', 'Medium') | list %}
+    <div class="stat-card"><div class="stat-value">{{ regulations|length }}</div><div class="stat-label">Regulations Tracked</div></div>
+    <div class="stat-card"><div class="stat-value">{{ high|length }}</div><div class="stat-label">High Severity</div></div>
+    <div class="stat-card"><div class="stat-value">{{ med|length }}</div><div class="stat-label">Medium Severity</div></div>
+    <div class="stat-card"><div class="stat-value">0</div><div class="stat-label">Active Violations</div></div>
+  </div>
+
+  <!-- Regulation cards -->
+  {% for reg in regulations %}
+  <div class="reg-card">
+    <div class="reg-header">
+      <div>
+        <div class="reg-id-badge">{{ reg.id }}</div>
+        <div class="reg-name">{{ reg.name }}</div>
+        <div class="reg-jurisdiction">📍 {{ reg.jurisdiction }}</div>
+      </div>
+      <div class="reg-right">
+        <span class="severity-chip severity-{{ reg.severity | lower }}">{{ reg.severity }}</span>
+        <div class="reg-penalty">Max penalty: <strong>{{ reg.max_penalty }}</strong></div>
+      </div>
+    </div>
+
+    <div class="reg-scope">{{ reg.scope }}</div>
+
+    <div class="reg-body">
+      <div class="reg-col">
+        <div class="reg-col-title">Key Obligations</div>
+        <ul class="reg-list">
+          {% for ob in reg.key_obligations %}
+          <li>{{ ob }}</li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div class="reg-col">
+        <div class="reg-col-title">Affected Data Types</div>
+        <div class="tag-group">
+          {% for dt in reg.data_types %}
+          <span class="data-tag">{{ dt }}</span>
+          {% endfor %}
+        </div>
+        <div class="reg-col-title" style="margin-top:1rem">Industries Impacted</div>
+        <div class="tag-group">
+          {% for ind in reg.industries %}
+          <span class="industry-tag">{{ ind }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="reg-col">
+        <div class="reg-col-title">Monetisation Impact</div>
+        <div class="reg-impact">{{ reg.monetization_impact }}</div>
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+
+  <!-- Compliance checklist -->
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Pre-Launch Compliance Checklist</h2>
+    <div class="checklist-grid">
+      {% set checks = [
+        ("Legal Basis Confirmed", "Every processing activity has an identified legal basis (consent, contract, legitimate interest, legal obligation).", "✅"),
+        ("De-identification Review", "All PII/PHI removed or anonymised to the applicable standard (GDPR: k-anonymity, HIPAA: 18-point safe harbor).", "✅"),
+        ("Data Processing Agreements", "DPAs/BAAs signed with every downstream processor and data marketplace.", "✅"),
+        ("Regulatory Tag Mapping", "Each data asset tagged with applicable regulations in the catalog.", "✅"),
+        ("Cross-Border Transfer Check", "No data transferred to non-permitted territories without SCCs / binding corporate rules.", "⚠️"),
+        ("Subject Rights Process", "Automated pipeline to process access, erasure, and portability requests within statutory deadlines.", "✅"),
+        ("Breach Response Plan", "Incident response plan documented; breach notification workflows tested.", "✅"),
+        ("API Contract Review", "Every external API contract includes data usage restrictions, IP ownership clause, and audit rights.", "⚠️"),
+      ] %}
+      {% for title, desc, status in checks %}
+      <div class="checklist-item {% if status == '✅' %}check-ok{% else %}check-warn{% endif %}">
+        <div class="check-status">{{ status }}</div>
+        <div class="check-content">
+          <div class="check-title">{{ title }}</div>
+          <div class="check-desc">{{ desc }}</div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}

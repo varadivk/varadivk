@@ -15,9 +15,12 @@
         ThinkVerge <span class="logo-tag">Data Monetization Agent</span>
       </a>
       <nav class="nav">
-        <a href="#!/"             class="nav-link" ng-class="{ active: isActive('/') }">Dashboard</a>
-        <a href="#!/industries"   class="nav-link" ng-class="{ active: isActive('/industries') }">Industries</a>
-        <a href="#!/valuation"    class="nav-link" ng-class="{ active: isActive('/valuation') }">Valuation Tool</a>
+        <a href="#!/"              class="nav-link" ng-class="{ active: isActive('/') }">Dashboard</a>
+        <a href="#!/industries"    class="nav-link" ng-class="{ active: isActive('/industries') }">Industries</a>
+        <a href="#!/data-products" class="nav-link" ng-class="{ active: isActive('/data-products') }">Data Products</a>
+        <a href="#!/compliance"    class="nav-link" ng-class="{ active: isActive('/compliance') }">Compliance</a>
+        <a href="#!/revenue"       class="nav-link" ng-class="{ active: isActive('/revenue') }">Revenue</a>
+        <a href="#!/valuation"     class="nav-link" ng-class="{ active: isActive('/valuation') }">Valuation</a>
         <a href="#!/orchestration" class="nav-link" ng-class="{ active: isActive('/orchestration') }">Orchestration</a>
       </nav>
     </div>
@@ -47,6 +50,9 @@
   <script src="controllers/industries.controller.js"></script>
   <script src="controllers/valuation.controller.js"></script>
   <script src="controllers/orchestration.controller.js"></script>
+  <script src="controllers/data_products.controller.js"></script>
+  <script src="controllers/compliance.controller.js"></script>
+  <script src="controllers/revenue.controller.js"></script>
 
   <!-- Active route helper on root scope -->
   <script>

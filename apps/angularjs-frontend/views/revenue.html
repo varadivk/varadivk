@@ -1,0 +1,117 @@
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Revenue Scenarios &amp; Buyer Personas</h1>
+    <p class="page-subtitle">
+      Three scenario projections (bear / base / bull) for data product revenue,
+      alongside authentic buyer personas to guide go-to-market targeting.
+    </p>
+  </div>
+
+  <!-- Scenario cards -->
+  <section class="section">
+    <h2 class="section-title">Revenue Projection Scenarios</h2>
+    <div class="scenarios-grid">
+      <div class="scenario-card" ng-style="{ 'border-color': scenario.color + '33' }"
+           ng-repeat="scenario in vm.scenarios">
+        <div class="scenario-header">
+          <span class="scenario-icon">{{ scenario.icon }}</span>
+          <span class="scenario-name">{{ scenario.scenario }}</span>
+          <span class="scenario-y3" ng-style="{ color: scenario.color }">
+            Y3 ARR: {{ vm.formatCurrency(scenario.y3ArrUsd) }}
+          </span>
+        </div>
+
+        <div class="scenario-section-label">Key Assumptions</div>
+        <ul class="scenario-assumptions">
+          <li ng-repeat="a in scenario.assumptions">{{ a }}</li>
+        </ul>
+
+        <div class="scenario-section-label" style="margin-top:1rem">Projections</div>
+        <table class="projection-table">
+          <thead>
+            <tr><th>Period</th><th>ARR</th><th>Customers</th><th>Products</th></tr>
+          </thead>
+          <tbody>
+            <tr ng-class="{ 'proj-final': $last }" ng-repeat="row in scenario.projections">
+              <td>{{ row.period }}</td>
+              <td ng-style="{ color: scenario.color }">{{ vm.formatCurrency(row.arrUsd) }}</td>
+              <td>{{ row.customers }}</td>
+              <td>{{ row.products }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- Year-3 comparison bars -->
+  <section class="section">
+    <h2 class="section-title">Year-3 ARR Comparison</h2>
+    <div class="comparison-bars">
+      <div class="comparison-row" ng-repeat="sc in vm.scenarios">
+        <span class="comparison-label">{{ sc.icon }} {{ sc.scenario }}</span>
+        <div class="comparison-bar-bg">
+          <div class="comparison-bar-fill"
+               ng-style="{ width: vm.barWidth(sc.y3ArrUsd), background: sc.color }"></div>
+        </div>
+        <span class="comparison-value" ng-style="{ color: sc.color }">{{ vm.formatCurrency(sc.y3ArrUsd) }}</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Buyer Personas -->
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Buyer Personas</h2>
+    <div class="personas-grid">
+      <div class="persona-card" ng-repeat="p in vm.personas">
+        <div class="persona-header">
+          <span class="persona-icon">{{ p.icon }}</span>
+          <div>
+            <div class="persona-name">{{ p.name }}</div>
+            <div class="persona-role">{{ p.role }}</div>
+            <div class="persona-company">{{ p.companyType }} &middot; {{ p.companySize }}</div>
+          </div>
+          <span class="persona-industry-tag">{{ p.industry }}</span>
+        </div>
+
+        <div class="persona-wtp">
+          <span class="wtp-label">WTP / month:</span>
+          <span class="wtp-range">
+            {{ vm.formatCurrency(p.wtpMonthly.min) }} &ndash;
+            <strong>{{ vm.formatCurrency(p.wtpMonthly.typical) }}</strong> &ndash;
+            {{ vm.formatCurrency(p.wtpMonthly.max) }}
+          </span>
+          <span class="wtp-cycle">{{ p.decisionCycleDays }}-day cycle</span>
+        </div>
+
+        <div class="persona-body">
+          <div class="persona-col">
+            <div class="persona-col-title">Pain Points</div>
+            <ul class="persona-list">
+              <li ng-repeat="pp in p.painPoints">{{ pp }}</li>
+            </ul>
+          </div>
+          <div class="persona-col">
+            <div class="persona-col-title">Success Metrics</div>
+            <ul class="persona-list green">
+              <li ng-repeat="sm in p.successMetrics">{{ sm }}</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="persona-footer">
+          <div>
+            <span class="persona-footer-label">Buying Triggers:</span>
+            <span class="trigger-tag" ng-repeat="bt in p.buyingTriggers">{{ bt }}</span>
+          </div>
+          <div style="margin-top:0.5rem">
+            <span class="persona-footer-label">Channels:</span>
+            <span class="channel-tag" ng-repeat="ch in p.channels">{{ ch }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</div>

@@ -37,6 +37,21 @@
         controller: 'OrchestrationController',
         controllerAs: 'vm'
       })
+      .when('/data-products', {
+        templateUrl: 'views/data_products.html',
+        controller: 'DataProductsController',
+        controllerAs: 'vm'
+      })
+      .when('/compliance', {
+        templateUrl: 'views/compliance.html',
+        controller: 'ComplianceController',
+        controllerAs: 'vm'
+      })
+      .when('/revenue', {
+        templateUrl: 'views/revenue.html',
+        controller: 'RevenueController',
+        controllerAs: 'vm'
+      })
       .otherwise({ redirectTo: '/' });
   }
 })();

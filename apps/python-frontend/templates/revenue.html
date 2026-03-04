@@ -1,0 +1,139 @@
+{% extends "base.html" %}
+{% block title %}Revenue Scenarios{% endblock %}
+
+{% block content %}
+<div class="container">
+
+  <div class="page-header">
+    <h1 class="page-title">Revenue Scenarios & Buyer Personas</h1>
+    <p class="page-subtitle">
+      Three scenario projections (bear / base / bull) for data product revenue,
+      alongside authentic buyer personas to guide go-to-market targeting.
+    </p>
+  </div>
+
+  <!-- Scenario cards -->
+  <section class="section">
+    <h2 class="section-title">Revenue Projection Scenarios</h2>
+    <div class="scenarios-grid">
+      {% for sc in scenarios %}
+      <div class="scenario-card" style="border-color: {{ sc.color }}33">
+        <div class="scenario-header">
+          <span class="scenario-icon">{{ sc.icon }}</span>
+          <span class="scenario-name">{{ sc.scenario }}</span>
+          <span class="scenario-y3" style="color: {{ sc.color }}">
+            Y3 ARR: ${{ "{:,.0f}".format(sc.y3_arr_usd) }}
+          </span>
+        </div>
+
+        <!-- Assumptions -->
+        <div class="scenario-section-label">Key Assumptions</div>
+        <ul class="scenario-assumptions">
+          {% for a in sc.assumptions %}
+          <li>{{ a }}</li>
+          {% endfor %}
+        </ul>
+
+        <!-- Projection table -->
+        <div class="scenario-section-label" style="margin-top:1rem">Projections</div>
+        <table class="projection-table">
+          <thead>
+            <tr>
+              <th>Period</th>
+              <th>ARR ($)</th>
+              <th>Customers</th>
+              <th>Products</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in sc.projections %}
+            <tr {% if loop.last %}class="proj-final"{% endif %}>
+              <td>{{ row.period }}</td>
+              <td style="color: {{ sc.color }}">${{ "{:,.0f}".format(row.arr_usd) }}</td>
+              <td>{{ row.customers }}</td>
+              <td>{{ row.products }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Scenario comparison bar -->
+  <section class="section">
+    <h2 class="section-title">Year-3 ARR Comparison</h2>
+    <div class="comparison-bars">
+      {% set max_arr = scenarios | map(attribute='y3_arr_usd') | max %}
+      {% for sc in scenarios %}
+      <div class="comparison-row">
+        <span class="comparison-label">{{ sc.icon }} {{ sc.scenario }}</span>
+        <div class="comparison-bar-bg">
+          <div class="comparison-bar-fill"
+               style="width: {{ (sc.y3_arr_usd / max_arr * 100) | round }}%; background: {{ sc.color }}"></div>
+        </div>
+        <span class="comparison-value" style="color: {{ sc.color }}">${{ "{:,.0f}".format(sc.y3_arr_usd) }}</span>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- Buyer Personas -->
+  <section class="section" style="margin-top:3rem">
+    <h2 class="section-title">Buyer Personas</h2>
+    <div class="personas-grid">
+      {% for p in personas %}
+      <div class="persona-card">
+        <div class="persona-header">
+          <span class="persona-icon">{{ p.icon }}</span>
+          <div>
+            <div class="persona-name">{{ p.name }}</div>
+            <div class="persona-role">{{ p.role }}</div>
+            <div class="persona-company">{{ p.company_type }} · {{ p.company_size }}</div>
+          </div>
+          <span class="persona-industry-tag">{{ p.industry }}</span>
+        </div>
+
+        <div class="persona-wtp">
+          <span class="wtp-label">WTP / month:</span>
+          <span class="wtp-range">
+            ${{ "{:,}".format(p.wtp_monthly_usd.min) }} –
+            <strong>${{ "{:,}".format(p.wtp_monthly_usd.typical) }}</strong> –
+            ${{ "{:,}".format(p.wtp_monthly_usd.max) }}
+          </span>
+          <span class="wtp-cycle">{{ p.decision_cycle_days }}-day cycle</span>
+        </div>
+
+        <div class="persona-body">
+          <div class="persona-col">
+            <div class="persona-col-title">Pain Points</div>
+            <ul class="persona-list">
+              {% for pp in p.pain_points %}<li>{{ pp }}</li>{% endfor %}
+            </ul>
+          </div>
+          <div class="persona-col">
+            <div class="persona-col-title">Success Metrics</div>
+            <ul class="persona-list green">
+              {% for sm in p.success_metrics %}<li>{{ sm }}</li>{% endfor %}
+            </ul>
+          </div>
+        </div>
+
+        <div class="persona-footer">
+          <div>
+            <span class="persona-footer-label">Buying Triggers:</span>
+            {% for bt in p.buying_triggers %}<span class="trigger-tag">{{ bt }}</span>{% endfor %}
+          </div>
+          <div style="margin-top:0.5rem">
+            <span class="persona-footer-label">Channels:</span>
+            {% for ch in p.channels %}<span class="channel-tag">{{ ch }}</span>{% endfor %}
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+
+</div>
+{% endblock %}
